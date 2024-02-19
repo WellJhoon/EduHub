@@ -1,3 +1,4 @@
+using ProyectoFinal.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -5,6 +6,8 @@ using Microsoft.OpenApi.Models;
 using ProyectoFinal.Configuration;
 using ProyectoFinal.Context;
 using System.Text;
+using ProyectoFinal.Services.Email;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,6 +34,7 @@ builder.Services.GetDependencyInjections();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
 
 builder.Services.AddAuthentication(config => {
 
@@ -80,6 +84,9 @@ builder.Services.AddSwaggerGen(option =>
         }
     });
 });
+
+
+builder.Services.AddScoped<IEmail, EmailService>();
 
 var app = builder.Build();
 
