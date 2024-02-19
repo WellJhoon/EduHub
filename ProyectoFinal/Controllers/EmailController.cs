@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using ProyectoFinal.Services.Email;
 using ProyectoFinal.Models;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace ProyectoFinal.Controllers
@@ -15,7 +16,7 @@ namespace ProyectoFinal.Controllers
         {
             _emailService = emailService;
         }
-
+        [Authorize(Roles = "Administrador")]
         [HttpPost]
         public IActionResult SendEmail(EmailDto request)
         {
