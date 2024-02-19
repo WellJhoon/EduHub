@@ -1,6 +1,7 @@
-﻿using ProyectoFinal.Models;
+﻿using ProyectoFinal.DTOs;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using static ProyectoFinal.DTOs.StudentDTO;
-using static ProyectoFinal.Services.StudentService;
 
 namespace ProyectoFinal.Interfaces
 {
@@ -13,5 +14,7 @@ namespace ProyectoFinal.Interfaces
         Task<List<object>> SubjectsEnrolledByStudent(AllSubjectsStudentRequestDto student);
 
         Task<List<object>> GetAllAssignmentsForStudent(AllSubjectsStudentRequestDto student);
+
+        Task<bool> SubmitAssignment(AssignmentDto assignmentDto);
     }
 }

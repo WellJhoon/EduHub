@@ -18,6 +18,10 @@ namespace ProyectoFinal.Models
         public int MateriaId { get; set; }
         public string NombreMateria { get; set; } = null!;
 
+        public int ProfesorId { get; set; } // ID del profesor asociado a la materia
+        public string Descripcion { get; set; } // Descripción de la materia
+
+
         public virtual ICollection<Asignacione> Asignaciones { get; set; }
         public virtual ICollection<Asistencium> Asistencia { get; set; }
         public virtual ICollection<Calificacione> Calificaciones { get; set; }

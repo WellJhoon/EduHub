@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProyectoFinal.Interfaces;
+using ProyectoFinal.Models;
 using static ProyectoFinal.DTOs.TeacherDTO;
 
 namespace ProyectoFinal.Controllers
@@ -20,7 +21,7 @@ namespace ProyectoFinal.Controllers
         }
 
         //[Authorize(Roles = "Profesor")]
-        [HttpPost("ProfesorAsignarMaterias")]
+        [HttpPost("AssignTeacherSubjects")]
         public async Task<IActionResult> TeachMatterSubject(TeachMatterRequestDto teacher)
         {
             var validation = await _validationsManager.ValidateAsync(teacher);
@@ -34,23 +35,23 @@ namespace ProyectoFinal.Controllers
 
             if (!teacherExists)
             {
-                return BadRequest("El profesor no existe.");
+                return BadRequest("The teacher does not exist.");
             }
 
             try
             {
                 await _teacherService.TeachMatterSubject(teacher);
-                return Ok("El profesor va impartir la materia exitosamente.");
+                return Ok("The teacher will teach the subject successfully.");
             }
 
             catch (Exception ex)
             {
-                return StatusCode(500, "Error interno del servidor: " + ex.InnerException);
+                return StatusCode(500, "Internal server error: " + ex.InnerException);
             }
         }
 
         //[Authorize(Roles = "Profesor")]
-        [HttpGet("ProfesorMostrarMaterias")] 
+        [HttpGet("ShowTeacherSubjects")]
         public async Task<IActionResult> AllSubjectsTaught([FromQuery] AllSubjectsTaughtRequestDto teacher)
         {
             var validation = await _validationsManager.ValidateAsync(teacher);
@@ -64,23 +65,23 @@ namespace ProyectoFinal.Controllers
 
             if (!teacherExists)
             {
-                return BadRequest("El profesor no existe.");
+                return BadRequest("The teacher does not exist.");
             }
 
             try
             {
-                var lista = await _teacherService.AllSubjectsTaught(teacher);
-                return Ok(lista);
+                var list = await _teacherService.AllSubjectsTaught(teacher);
+                return Ok(list);
             }
 
             catch (Exception ex)
             {
-                return StatusCode(500, "Error interno del servidor: " + ex.InnerException);
+                return StatusCode(500, "Internal server error: " + ex.InnerException);
             }
         }
 
         //[Authorize(Roles = "Profesor")]
-        [HttpPost("CrearTarea")]
+        [HttpPost("CreateTask")]
         public async Task<IActionResult> CreateTask(TaskPublishRequestDto task)
         {
             var validation = await _validationsManager.ValidateAsync(task);
@@ -94,26 +95,102 @@ namespace ProyectoFinal.Controllers
 
             if (!teacherExists)
             {
-                return BadRequest("El profesor no existe.");
+                return BadRequest("The teacher does not exist.");
             }
 
             var subjectExists = await _validationsManager.ValidateTeacherSubjectExistAsync(task.ProfesorId, task.MateriaId);
 
             if (!subjectExists)
             {
-                return BadRequest("El profesor no tiene asignada esta materia o no existe.");
+                return BadRequest("The teacher does not have this subject assigned or it does not exist.");
             }
 
             try
             {
                 await _teacherService.CreateTask(task);
-                return Ok("Se ha publicado la tarea exitosamente.");
+                return Ok("The task has been successfully published.");
             }
 
             catch (Exception ex)
             {
-                return StatusCode(500, "Error interno del servidor: " + ex.InnerException);
+                return StatusCode(500, "Internal server error: " + ex.InnerException);
             }
         }
+
+        [HttpPut("UpdateSubject/{id}")]
+        public async Task<IActionResult> UpdateSubject(int id, [FromBody] UpdateSubjectRequestDto updatedSubjectDto)
+        {
+            try
+            {
+                // Get the existing subject by its ID
+                var existingSubject = await _teacherService.GetSubjectById<Materia>(id);
+                if (existingSubject == null)
+                {
+                    return NotFound($"The subject with ID {id} was not found");
+                }
+
+                // Update the properties of the existing subject with the values provided in updatedSubjectDto
+                existingSubject.NombreMateria = updatedSubjectDto.Titulo; // For example, if the DTO has a 'SubjectName' field
+
+                // You can add more lines if there are more properties to update
+                
+
+                return Ok("Subject updated successfully.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpPost("CreateSubject")]
+        public async Task<IActionResult> CreateSubject([FromBody] CreateSubjectRequestDto subjectDto)
+        {
+            try
+            {
+                await _teacherService.CreateSubject(subjectDto);
+                return Ok("Subject created successfully.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpGet("GetAllSubjects")]
+        public async Task<IActionResult> GetAllSubjects()
+        {
+            try
+            {
+                var subjects = await _teacherService.GetAllSubjects<Materia>();
+                return Ok(subjects);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpGet("GetSubjectById/{id}")]
+        public async Task<IActionResult> GetSubjectById(int id)
+        {
+            try
+            {
+                var subject = await _teacherService.GetSubjectById<Materia>(id);
+                if (subject == null)
+                    return NotFound($"The subject with ID {id} was not found");
+
+                return Ok(subject);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+
+        }
+
+
     }
-}
+

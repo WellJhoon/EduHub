@@ -24,5 +24,23 @@
 
             public DateTime? FechaVencimiento { get; set; }
         }
+
+        public class CreateSubjectRequestDto
+        {
+            public int ProfesorId { get; set; }
+            public string Nombre { get; set; }
+            public string Descripcion { get; set; }
+            // Otros campos necesarios para la creación de la materia
+        }
+
+        public class UpdateSubjectRequestDto
+        {
+            public int MateriaId { get; set; }
+            public int ProfesorId { get; set; }
+            public string Titulo { get; set; }
+            public string Descripcion { get; set; }
+
+            public DateTime? FechaVencimiento { get; set; }
+        }
     }
 }

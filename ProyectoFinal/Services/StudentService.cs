@@ -17,26 +17,20 @@ namespace ProyectoFinal.Services
 
         public async Task EnrollCareerStudent(EnrollCareerStudentRequestDto student)
         {
-
             var studentSelect = await _context.Estudiantes.FirstOrDefaultAsync(u => u.EstudianteId == student.EstudianteId);
-
             studentSelect.CarreraId = student.CarreraId;
-
             await _context.SaveChangesAsync();
         }
 
         public async Task EnrollSubjectStudent(EnrollSubjectStudentRequestDto student)
         {
-
-            var stundentSubject = new EstudianteMaterium
+            var studentSubject = new EstudianteMaterium
             {
                 EstudianteId = student.EstudianteId,
                 MateriaId = student.MateriaId
             };
 
-
-            _context.EstudianteMateria.Add(stundentSubject);
-
+            _context.EstudianteMateria.Add(studentSubject);
             await _context.SaveChangesAsync();
         }
 
@@ -58,7 +52,7 @@ namespace ProyectoFinal.Services
         {
             var assignments = await _context.EstudianteMateria
                 .Where(em => em.EstudianteId == student.EstudianteId &&
-                             em.Materia.Asignaciones.Any()) 
+                             em.Materia.Asignaciones.Any())
                 .Select(em => new
                 {
                     MateriaNombre = em.Materia.NombreMateria,
@@ -77,7 +71,30 @@ namespace ProyectoFinal.Services
             return assignments.Cast<object>().ToList();
         }
 
+        public async Task<bool> SubmitAssignment(AssignmentDto assignmentDto)
+        {
+            try
+            {
+                var newAssignment = new Asignacione
+                {
+                    MateriaId = assignmentDto.MateriaId,
+                    ProfesorId = assignmentDto.ProfesorId,
+                    Titulo = assignmentDto.Titulo,
+                    Descripcion = assignmentDto.Descripcion,
+                    FechaPublicacion = assignmentDto.FechaPublicacion,
+                    FechaVencimiento = assignmentDto.FechaVencimiento
+                };
 
+                _context.Asignaciones.Add(newAssignment);
+                await _context.SaveChangesAsync();
 
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al enviar la asignación: {ex.Message}");
+                return false;
+            }
+        }
     }
 }
