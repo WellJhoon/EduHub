@@ -113,5 +113,38 @@ namespace ProyectoFinal.Services
             await _context.SaveChangesAsync();
         }
 
+        public async Task CreateForum(CreateForumRequestDto forumDto)
+        {
+            try
+            {
+                var newForum = new Forum
+                {
+                    MateriaId = forumDto.MateriaId,
+                    ProfesorId = forumDto.ProfesorId,
+                    Titulo = forumDto.Titulo,
+                    Descripcion = forumDto.Descripcion
+                };
+
+                _context.Forums.Add(newForum);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al crear el foro. Detalles: " + ex.Message);
+            }
+        }
+
+        public async Task<List<Forum>> GetAllForums()
+        {
+            return await _context.Forums.ToListAsync();
+        }
+
+        public async Task<List<Forum>> GetForumsByMateria(int materiaId)
+        {
+            return await _context.Forums
+                .Where(f => f.MateriaId == materiaId)
+                .ToListAsync();
+        }
+
     }
 }

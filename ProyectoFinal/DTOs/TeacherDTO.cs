@@ -42,5 +42,25 @@
 
             public DateTime? FechaVencimiento { get; set; }
         }
+
+        public class CreateForumRequestDto
+        {
+            public int MateriaId { get; set; }
+            public int ProfesorId { get; set; }
+            public string Titulo { get; set; }
+            public string Descripcion { get; set; }
+        }
+
+        public class UpdateForumRequestDto
+        {
+            public string Titulo { get; set; }
+            public string Descripcion { get; set; }
+        }
+
+        public class updatedForumDto
+        {
+            public string Titulo { get; set; }
+            public string Descripcion { get; set; }
+        }
     }
 }

@@ -2,6 +2,7 @@
 using ProyectoFinal.Context;
 using ProyectoFinal.Interfaces;
 using ProyectoFinal.Models;
+
 using static ProyectoFinal.DTOs.StudentDTO;
 
 namespace ProyectoFinal.Services
@@ -96,5 +97,35 @@ namespace ProyectoFinal.Services
                 return false;
             }
         }
+            public async Task<List<object>> GetPendingAssignmentsForStudent(AllSubjectsStudentRequestDto student)
+            {
+                try
+                {
+                    var currentDate = DateTime.Now;
+                    var pendingAssignments = await _context.EstudianteMateria
+                        .Where(em => em.EstudianteId == student.EstudianteId)
+                        .SelectMany(em => em.Materia.Asignaciones
+                            .Where(a => a.FechaVencimiento >= currentDate)
+                            .Select(a => new
+                            {
+                                AsignacionId = a.AsignacionId,
+                                MateriaId = a.MateriaId,
+                                ProfesorId = a.ProfesorId,
+                                Titulo = a.Titulo,
+                                Descripcion = a.Descripcion,
+                                FechaPublicacion = a.FechaPublicacion,
+                                FechaVencimiento = a.FechaVencimiento
+                            }))
+                        .ToListAsync();
+
+                    return pendingAssignments.Cast<object>().ToList();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error al obtener las tareas pendientes del estudiante: {ex.Message}");
+                    return new List<object>();
+                }
+            }
+        }
     }
-}
+

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProyectoFinal.Interfaces;
 using ProyectoFinal.Models;
@@ -188,9 +189,58 @@ namespace ProyectoFinal.Controllers
             }
         }
 
+        [Authorize(Roles = "Profesor")]
+        [HttpPost("CreateForum")]
+        public async Task<IActionResult> CreateForum(CreateForumRequestDto forumDto)
+        {
+            var validation = await _validationsManager.ValidateAsync(forumDto);
 
+            if (!validation.IsValid)
+            {
+                return BadRequest(validation.Errors);
+            }
+
+            var teacherExists = await _validationsManager.ValidateTeacherExistAsync(forumDto.ProfesorId);
+
+            if (!teacherExists)
+            {
+                return BadRequest("The teacher does not exist.");
+            }
+
+            var subjectExists = await _validationsManager.ValidateTeacherSubjectExistAsync(forumDto.ProfesorId, forumDto.MateriaId);
+
+            if (!subjectExists)
+            {
+                return BadRequest("The teacher does not have this subject assigned or it does not exist.");
+            }
+
+            try
+            {
+                await _teacherService.CreateForum(forumDto);
+                return Ok("The forum has been successfully created.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error: " + ex.InnerException);
+            }
+        }
+
+        // GET: api/forums
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Forum>>> GetAllForums()
+        {
+            return await _teacherService.GetAllForums();
+        }
+
+        // GET: api/forums/by-materia/{materiaId}
+        [HttpGet("by-materia/{materiaId}")]
+        public async Task<ActionResult<IEnumerable<Forum>>> GetForumsByMateria(int materiaId)
+        {
+            return await _teacherService.GetForumsByMateria(materiaId);
         }
 
 
     }
+
+ }
 

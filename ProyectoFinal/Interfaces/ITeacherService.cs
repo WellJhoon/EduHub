@@ -14,6 +14,10 @@ namespace ProyectoFinal.Interfaces
 
         Task CreateTask(TaskPublishRequestDto newTask);
         Task UpdateSubject(int id, UpdateSubjectRequestDto updatedSubject);
+        Task CreateForum(CreateForumRequestDto forumDto);
+        Task<List<Forum>> GetAllForums();
+        Task<List<Forum>> GetForumsByMateria(int materiaId);
+     
 
 
     }

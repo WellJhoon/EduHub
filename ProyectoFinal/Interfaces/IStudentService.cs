@@ -16,5 +16,8 @@ namespace ProyectoFinal.Interfaces
         Task<List<object>> GetAllAssignmentsForStudent(AllSubjectsStudentRequestDto student);
 
         Task<bool> SubmitAssignment(AssignmentDto assignmentDto);
+
+        Task<List<object>> GetPendingAssignmentsForStudent(AllSubjectsStudentRequestDto student);
+
     }
 }

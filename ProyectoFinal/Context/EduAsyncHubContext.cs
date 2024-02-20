@@ -31,6 +31,8 @@ namespace ProyectoFinal.Context
         public virtual DbSet<RespuestasEstudiante> RespuestasEstudiantes { get; set; } = null!;
         public virtual DbSet<Role> Roles { get; set; } = null!;
         public virtual DbSet<Usuario> Usuarios { get; set; } = null!;
+        public virtual DbSet<Forum> Forums { get; set; }
+
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
